@@ -4,14 +4,14 @@ import com.meas.blog.api.dtos.LoginBody;
 import com.meas.blog.api.dtos.LoginResponse;
 import com.meas.blog.api.dtos.RegistrationBody;
 import com.meas.blog.exceptions.UserAlreadyExistsException;
+import com.meas.blog.models.User;
 import com.meas.blog.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -21,6 +21,11 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping
+    public List<User> getUsers(){
+        return userService.getUsers();
     }
 
     /***

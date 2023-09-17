@@ -24,6 +24,10 @@ public class UserService {
         this.encryptionService = encryptionService1;
     }
 
+    public List<User> getUsers(){
+        return userDAO.findAll();
+    }
+
     public User registerUser(RegistrationBody registrationBody) throws UserAlreadyExistsException{
         // TODO: Add exception check if user already exists
         if(userDAO.findByEmailIgnoreCase(registrationBody.getEmail()).isPresent()

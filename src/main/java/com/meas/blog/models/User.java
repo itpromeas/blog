@@ -32,6 +32,17 @@ public class User {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Post> posts = new ArrayList<>();
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
+
     public String getLastName() {
         return lastName;
     }
