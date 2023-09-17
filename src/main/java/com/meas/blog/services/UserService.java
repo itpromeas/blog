@@ -1,18 +1,27 @@
 package com.meas.blog.services;
 
+import com.meas.blog.api.dtos.LoginBody;
 import com.meas.blog.api.dtos.RegistrationBody;
 import com.meas.blog.exceptions.UserAlreadyExistsException;
 import com.meas.blog.models.User;
 import com.meas.blog.models.dao.UserDAO;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class UserService {
 
     private UserDAO userDAO;
+    private JWTService jwtService;
+    private EncryptionService encryptionService;
 
-    public UserService(UserDAO userDAO, EncryptionService encryptionService) {
+    public UserService(UserDAO userDAO, EncryptionService encryptionService, JWTService jwtService, EncryptionService encryptionService1) {
         this.userDAO = userDAO;
+        this.jwtService = jwtService;
+        this.encryptionService = encryptionService1;
     }
 
     public User registerUser(RegistrationBody registrationBody) throws UserAlreadyExistsException{
@@ -29,9 +38,22 @@ public class UserService {
         user.setFirstName(registrationBody.getFirstName());
         user.setLastName(registrationBody.getLastName());
 
-        // TODO: encrypt password
-        user.setPassword(registrationBody.getPassword());
+        // encrypt password
+        user.setPassword(encryptionService.encryptPassword(registrationBody.getPassword()));
 
         return userDAO.save(user);
     }
+
+
+    public String loginUser(LoginBody loginBody) {
+        Optional<User> opUser = userDAO.findByUsernameIgnoreCase(loginBody.getUsername());
+        if (opUser.isPresent()) {
+            User user = opUser.get();
+            if (encryptionService.verifyPassword(loginBody.getPassword(), user.getPassword())) {
+                return jwtService.generateJWT(user);
+            }
+        }
+        return null;
+    }
+
 }

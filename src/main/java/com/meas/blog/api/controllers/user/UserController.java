@@ -1,5 +1,7 @@
 package com.meas.blog.api.controllers.user;
 
+import com.meas.blog.api.dtos.LoginBody;
+import com.meas.blog.api.dtos.LoginResponse;
 import com.meas.blog.api.dtos.RegistrationBody;
 import com.meas.blog.exceptions.UserAlreadyExistsException;
 import com.meas.blog.services.UserService;
@@ -30,9 +32,31 @@ public class UserController {
     public ResponseEntity registerUSer(@Valid @RequestBody RegistrationBody registrationBody){
         try{
             userService.registerUser(registrationBody);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok("Successful Registration");
         }catch (UserAlreadyExistsException userException){
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("User Already Exists");
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity loginUser(@Valid @RequestBody LoginBody loginBody){
+        String jwt = null;
+        LoginResponse response = new LoginResponse();
+        try {
+            jwt = userService.loginUser(loginBody);
+        } catch (Exception ex) {
+            response.setSuccess(false);
+            String reason = "TOKEN_NOT_CORRECT or SOMETHING WENT WRONG";
+            response.setFailureReason(reason);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
+
+        if (jwt == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } else {
+            response.setJwt(jwt);
+            response.setSuccess(true);
+            return ResponseEntity.ok(response);
         }
     }
 }
