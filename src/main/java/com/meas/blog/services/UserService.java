@@ -5,6 +5,7 @@ import com.meas.blog.api.dtos.RegistrationBody;
 import com.meas.blog.exceptions.UserAlreadyExistsException;
 import com.meas.blog.models.User;
 import com.meas.blog.models.dao.UserDAO;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -56,6 +57,19 @@ public class UserService {
             if (encryptionService.verifyPassword(loginBody.getPassword(), user.getPassword())) {
                 return jwtService.generateJWT(user);
             }
+        }
+        return null;
+    }
+
+    public boolean userHasPermissionToUser(User user, Long id) {
+        return user.getId() == id;
+    }
+
+    public User getCurrentUser(String username) {
+        Optional<User> opUser = userDAO.findByUsernameIgnoreCase(username);
+        if (opUser.isPresent()) {
+            User user = opUser.get();
+            return user;
         }
         return null;
     }

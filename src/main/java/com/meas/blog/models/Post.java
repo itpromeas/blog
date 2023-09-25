@@ -1,5 +1,6 @@
 package com.meas.blog.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -20,7 +21,7 @@ public class Post {
 
     @Lob
     @NotEmpty
-    @Column(name = "content")
+    @Column(name = "content", length = 1000000 )
     private String content;
 
     @Column(name = "created_on")
@@ -29,9 +30,23 @@ public class Post {
     @Column(name = "updated_on")
     private Instant updatedOn;
 
+
+
+    @JsonIgnore
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Column(name = "username", nullable = false)
+    private String username;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public User getUser() {
         return user;

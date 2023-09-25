@@ -8,6 +8,16 @@ public class LoginResponse {
     /** The reason for failure on login. */
     private String failureReason;
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    private String username;
+
     public String getJwt() {
         return jwt;
     }

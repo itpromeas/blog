@@ -9,6 +9,7 @@ import com.meas.blog.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class UserController {
     public ResponseEntity registerUSer(@Valid @RequestBody RegistrationBody registrationBody){
         try{
             userService.registerUser(registrationBody);
-            return ResponseEntity.ok("Successful Registration");
+            return ResponseEntity.ok().build();
         }catch (UserAlreadyExistsException userException){
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User Already Exists");
         }
@@ -60,8 +61,12 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } else {
             response.setJwt(jwt);
+            response.setUsername(loginBody.getUsername());
             response.setSuccess(true);
             return ResponseEntity.ok(response);
         }
     }
+
+
+
 }
